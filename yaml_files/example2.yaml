@@ -1,0 +1,29 @@
+TASK: classification
+COMPRESSION_ALIAS: 0405-TEST
+COMPRESSION_CONSTRAINTS:
+  objective: accuracy
+  acceptable_drop_percent_point: 5.0
+INPUT:
+  storage: s3
+  type: pb # h5
+  path: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/models/vgg16.zip
+  image_height_width: [32, 32]
+  test_accuracy_percent: 82.0
+OUTPUT:
+  model_type: tflite  # (future release) tftrt
+  dtype: float16  # float32, float16, int8, int8_full
+  test_device: pc # (future release) raspberrypi, jetson_nano
+DATASET:
+  storage: s3
+  type: npy
+  path:
+    train_x: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/npy/train_x.npy
+    train_y: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/npy/train_y.npy
+    test_x: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/npy/test_x.npy
+    test_y: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/npy/test_y.npy
+  dataloader_config:
+    preprocessing:
+      rescale_value: 255
+      mean: [0.0, 0.0, 0.0]
+      std: [1.0, 1.0, 1.0]
+    default_batch_size: 16
