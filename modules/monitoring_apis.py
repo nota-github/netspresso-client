@@ -2,9 +2,9 @@ import requests
 import os
 from urllib.request import urlretrieve
 
-from netspresso_real_client import settings
-from netspresso_real_client.modules.types import ReturnDataType, DataSetFormat
-from netspresso_real_client.modules.codec import encoder
+import settings
+from modules.types import ReturnDataType, DataSetFormat
+from modules.codec import encoder
 
 
 def get_compression_status_list(

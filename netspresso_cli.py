@@ -1,3 +1,4 @@
+import sys
 import requests
 import yaml
 import json
@@ -5,9 +6,11 @@ import glob
 import time
 from pathlib import Path
 
-from netspresso_real_client.modules import monitoring_apis
-from netspresso_real_client.modules.types import ReturnDataType
-from netspresso_real_client.modules import aws_connection
+sys.path.append(".")
+
+from modules import monitoring_apis
+from modules.types import ReturnDataType
+from modules import aws_connection
 
 def run_netspresso(yaml_fname: str, uri: str)-> str:
     print("[*] netspresso started to compress.")

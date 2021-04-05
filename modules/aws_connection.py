@@ -7,7 +7,7 @@ import zipfile
 from urllib.parse import urljoin
 from pathlib import Path
 
-from netspresso_real_client import settings
+import settings
 
 
 def get_auth():
