@@ -2,5 +2,5 @@
 
 ## Run
 ```python
-python netspresso_cli.py --config yaml_files/example1.yaml
+python netspresso_cli/main.py --config config_files/example1.yaml
 ```

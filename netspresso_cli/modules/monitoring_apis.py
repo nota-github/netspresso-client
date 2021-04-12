@@ -1,10 +1,9 @@
 import requests
 import os
 from urllib.request import urlretrieve
-
-import settings
-from modules.types import ReturnDataType, DataSetFormat
-from modules.codec import encoder
+from netspresso_cli import settings
+from netspresso_cli.modules.types import ReturnDataType, DataSetFormat
+from netspresso_cli.modules.codec import encoder
 
 
 def get_compression_status_list(
@@ -31,6 +30,12 @@ def get_compression_status(compression_id: str, return_type: ReturnDataType = Re
     )
     return encoder(json_data=r.json(), output_format=return_type)
 
+def get_task_queue_size():
+    r = requests.get(
+        f"http://{settings.API_SERVER.HOST}:{settings.API_SERVER.PORT}/api/v1/task_queue_status"
+    )
+    return r.json()
+
 def get_result(
     compression_id: str,
     return_type: ReturnDataType = ReturnDataType.JSON,
@@ -41,14 +46,17 @@ def get_result(
     return encoder(json_data=r.json(), output_format=return_type)
 
 
-def download_log_file(compression_id: str, dst_folder_path:str, download_url: str)->None:
-    return download_file(compression_id, dst_folder_path, download_url)
+def download_log_file(compression_id: str, dst_folder_path:str)->None:
+    target_url = f'http://{settings.API_SERVER.HOST}:{settings.API_SERVER.PORT}/compression_status/{compression_id}/log/download/'
+    return download_file(compression_id, dst_folder_path, target_url)
 
-def download_original_type_compressed_model_file(compression_id: str, dst_folder_path:str, download_url: str)->None:
-    return download_file(compression_id, dst_folder_path, download_url)
+def download_original_type_compressed_model_file(compression_id: str, dst_folder_path:str)->None:
+    target_url = f'http://{settings.API_SERVER.HOST}:{settings.API_SERVER.PORT}/compression_status/{compression_id}/original_model/download/'
+    return download_file(compression_id, dst_folder_path, target_url)
 
-def download_converted_type_compressed_model_file(compression_id: str, dst_folder_path:str, download_url: str)->None:
-    return download_file(compression_id, dst_folder_path, download_url)
+def download_converted_type_compressed_model_file(compression_id: str, dst_folder_path:str)->None:
+    target_url = f'http://{settings.API_SERVER.HOST}:{settings.API_SERVER.PORT}/compression_status/{compression_id}/compressed_model/download/'
+    return download_file(compression_id, dst_folder_path, target_url)
 
 
 def download_file(compression_id: str, dst_folder_path:str, target_url: str)->None:

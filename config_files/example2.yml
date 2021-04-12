@@ -4,9 +4,8 @@ COMPRESSION_CONSTRAINTS:
   objective: accuracy
   acceptable_drop_percent_point: 5.0
 INPUT:
-  storage: s3
   type: pb # h5
-  path: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/models/vgg16.zip
+  path: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/models/vgg_model.zip
   image_height_width: [32, 32]
   test_accuracy_percent: 82.0
 OUTPUT:
@@ -14,7 +13,6 @@ OUTPUT:
   dtype: float16  # float32, float16, int8, int8_full
   test_device: pc # (future release) raspberrypi, jetson_nano
 DATASET:
-  storage: s3
   type: npy
   path:
     train_x: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/npy/train_x.npy
@@ -27,3 +25,6 @@ DATASET:
       mean: [0.0, 0.0, 0.0]
       std: [1.0, 1.0, 1.0]
     default_batch_size: 16
+STORAGE:
+  type: s3
+  destination_path: "/0405-TEST" # specify folder name in the destination storage

@@ -3,11 +3,10 @@ import glob
 import boto3
 import requests
 import tqdm
+from netspresso_cli import settings
 import zipfile
 from urllib.parse import urljoin
 from pathlib import Path
-
-import settings
 
 
 def get_auth():
@@ -15,14 +14,12 @@ def get_auth():
     assert os.environ.get("AWS_SECRET_KEY") != None
     aws_access_key_id = os.environ["AWS_KEY_ID"].strip()
     aws_secret_access_key = os.environ["AWS_SECRET_KEY"].strip()
-    aws_bucket_name = os.environ["AWS_BUCKET_NAME"].strip()
-    aws_region_name = os.environ["AWS_REGION_NAME"].strip()
 
     aws_auth_info = {}
     aws_auth_info["aws_access_key_id"] = aws_access_key_id
     aws_auth_info["aws_secret_access_key"] = aws_secret_access_key
-    aws_auth_info["bucket_name"] = aws_bucket_name
-    aws_auth_info["region_name"] = aws_region_name
+    aws_auth_info["bucket_name"] = "donguklim-netspresso-bucket" #TODO: change to input
+    aws_auth_info["region_name"] = "us-east-2"
     return aws_auth_info
 
 
@@ -47,7 +44,7 @@ def upload_folder_to_s3(aws_auth_info, src_path):
     )
 
 
-def upload_folder_to_s3_using_zip(aws_auth_info, src_path, dst_path, reuse_file=True):
+def upload_folder_to_s3_using_zip(aws_auth_info, src_path, dst_path):
     dst_zip_path = src_path.rstrip("[/\\]") + ".zip"
     zfile = zipfile.ZipFile(dst_zip_path, "w")
     path_list = []
@@ -61,7 +58,7 @@ def upload_folder_to_s3_using_zip(aws_auth_info, src_path, dst_path, reuse_file=
     return s3_zip_url
 
 
-def upload_file_to_s3(aws_auth_info, src_path, dst_path, reuse_file=True):
+def upload_file_to_s3(aws_auth_info, src_path, dst_path):
     s3 = boto3.client(
         "s3",
         aws_access_key_id=aws_auth_info["aws_access_key_id"],
@@ -89,6 +86,7 @@ def download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url):
         os.makedirs(save_path)
     s3.Bucket(bucket_id).download_file(key, file_path)
     return file_path
+
 
 def _make_s3_url(bucket_name: str, region_name: str, key: str) -> str:
     retn = f"https://{bucket_name}.s3.{region_name}.amazonaws.com"

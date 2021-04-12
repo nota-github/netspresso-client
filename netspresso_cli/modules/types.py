@@ -12,10 +12,9 @@ class ReturnDataType(Enum):
 class DataSetFormat(Enum):
     """when passing compression configs to api server, dataset format required"""
 
-    FOLDER = 1
-    imagefolder = 2
-    TFRECORD = 3
-    NUMPY = 4
+    imagefolder = 1
+    tfrecord = 2
+    numpy = 3
 
 class InputModelType(Enum):
     # models
