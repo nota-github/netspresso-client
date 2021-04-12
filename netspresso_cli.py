@@ -1,4 +1,6 @@
+import argparse
 import sys
+import os
 import requests
 import yaml
 import json
@@ -11,6 +13,16 @@ sys.path.append(".")
 from modules import monitoring_apis
 from modules.types import ReturnDataType
 from modules import aws_connection
+
+
+def get_argparse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--config", required=True, help="yaml config path")
+    args = parser.parse_args()
+    
+    assert os.path.isfile(args.config)
+
+    return args
 
 def run_netspresso(yaml_fname: str, uri: str)-> str:
     print("[*] netspresso started to compress.")
@@ -29,10 +41,11 @@ def run_netspresso(yaml_fname: str, uri: str)-> str:
     return r.json()
 
 
-
+# 0. get argument
+args = get_argparse()
 
 # 1. compress
-yaml_fname = "yaml_files/example1.yaml"
+yaml_fname = args.config
 uri = "acfe62d997b9043858797f5154a0fc86-1177422271.us-east-2.elb.amazonaws.com:8000"
 compression_id = run_netspresso(yaml_fname, uri)
 
