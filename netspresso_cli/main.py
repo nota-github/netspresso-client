@@ -11,8 +11,9 @@
 import time
 import sys
 import yaml
+import os
 
-sys.path.append("..")
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from netspresso_cli import settings
 from netspresso_cli.modules import aws_connection
 from netspresso_cli.modules.types import ReturnDataType, DataSetFormat, InputModelType
