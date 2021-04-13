@@ -28,3 +28,4 @@ DATASET:
 STORAGE:
   type: s3
   destination_path: "/0405-TEST" # specify folder name in the destination storage
+  s3_bucket_name: "nota-netspresso-bucket"

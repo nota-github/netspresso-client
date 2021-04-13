@@ -24,3 +24,4 @@ DATASET:
 STORAGE:
   type: s3
   destination_path: "/test-compression" # specify folder name in the destination storage
+  s3_bucket_name: "nota-netspresso-bucket"
