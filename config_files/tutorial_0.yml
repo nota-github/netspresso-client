@@ -1,6 +1,6 @@
 # Tutorial 1
 TASK: classification
-COMPRESSION_ALIAS: example1_yaml
+COMPRESSION_ALIAS: tutorial_0_yaml
 COMPRESSION_CONSTRAINTS:
   objective: accuracy
   acceptable_drop_percent_point: 75.0
