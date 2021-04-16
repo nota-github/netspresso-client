@@ -1,3 +1,11 @@
+if [ $(basename $(pwd)) == netspresso-client ]
+then
+  # Get pull from Github repository
+  git pull
+  cd ..
+  # echo $(basename $(pwd))
+fi
+
 if [ ! -d netspresso-client ]
 then
 	# Get clone from Github repository
@@ -5,14 +13,21 @@ then
 	cd netspresso-client
 
 	# Make new venv
-	python3 -m venv netspresso-venv
-	source netspresso-venv/bin/activate
-	pip install --upgrade pip
+  if [ ! -d netspresso-venv ]
+  then
+		python3 -m venv netspresso-venv
+		source netspresso-venv/bin/activate
+		pip3 install --upgrade pip
+  else
+	  source netspresso-venv/bin/activate
+  fi
+
+  # Insall requirermnts
+	pip3 install -r requirements.txt
+else
+	cd netspresso-client
+  source netspresso-venv/bin/activate
 fi
-
-
-# Insall requirermnts
-pip install -r requirements.txt
 
 # Run the first tutorial
 python3 netspresso_cli/main.py --config config_files/tutorial_0.yml
