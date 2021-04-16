@@ -2,5 +2,5 @@
 
 ## Run
 ```bash
-source run_first_tutorial.sh
+sh run_first_tutorial.sh
 ```
