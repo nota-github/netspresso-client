@@ -26,6 +26,8 @@ from netspresso_cli.modules.monitoring_apis import get_result
 from netspresso_cli.modules.monitoring_apis import download_log_file
 from netspresso_cli.modules.monitoring_apis import download_original_type_compressed_model_file
 from netspresso_cli.modules.monitoring_apis import download_converted_type_compressed_model_file
+from netspresso_cli.modules.monitoring_apis import delete_compression_id_in_task_queue
+
 from netspresso_cli.modules.common import get_argparse
 from netspresso_cli.modules.common import calculate_duration
 
