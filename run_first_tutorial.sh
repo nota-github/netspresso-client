@@ -23,6 +23,12 @@ then
 
   # Insall requirermnts
 	pip3 install -r requirements.txt
+  
+  if [ -e ../run_first_tutorial.sh ]
+  then
+		rm ../run_first_tutorial.sh
+  fi
+
 else
 	cd netspresso-client
   source netspresso-venv/bin/activate
