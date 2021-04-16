@@ -1,5 +1,6 @@
+# Tutorial 3
 TASK: classification
-COMPRESSION_ALIAS: test-compression
+COMPRESSION_ALIAS: tutorial_3_yaml
 COMPRESSION_CONSTRAINTS:
   objective: accuracy
   acceptable_drop_percent_point: 20.0
