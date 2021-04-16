@@ -1,5 +1,6 @@
 import requests
 import os
+import json
 from urllib.request import urlretrieve
 from netspresso_cli import settings
 from netspresso_cli.modules.types import ReturnDataType, DataSetFormat
@@ -74,3 +75,19 @@ def download_file(compression_id: str, dst_folder_path:str, target_url: str)->No
             print(f"error occured! {e}")
             exit(0)
     return target_filename
+
+
+def delete_compression_id_in_task_queue(compression_id: str)->None:
+    """delete compression_id in task queue
+    (example)
+    print(delete_compression_id_in_task_queue("ff2d0848-5daf-48de-9e61-0e1eb7761766"))
+    """
+    data = {
+        "compression_id": compression_id,  # yaml config
+    }
+    headers = {'Content-Type': 'application/json; charset=utf-8'}
+    r = requests.post(
+        f"http://{settings.API_SERVER.HOST}:{settings.API_SERVER.PORT}/api/v1/task_queue/delete",
+        data=json.dumps(data), headers=headers
+    )
+    return r.json() # return compression_id
