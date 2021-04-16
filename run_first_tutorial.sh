@@ -1,9 +1,13 @@
+# If the user is already in the netspresso-client
 if [ $(basename $(pwd)) == netspresso-client ]
 then
   # Get pull from Github repository
   git pull
   cd ..
-  # echo $(basename $(pwd))
+  if [ -e run_first_tutorial.sh ]
+  then
+		rm run_first_tutorial.sh
+  fi
 fi
 
 if [ ! -d netspresso-client ]
@@ -13,14 +17,9 @@ then
 	cd netspresso-client
 
 	# Make new venv
-  if [ ! -d netspresso-venv ]
-  then
-		python3 -m venv netspresso-venv
-		source netspresso-venv/bin/activate
-		pip3 install --upgrade pip
-  else
-	  source netspresso-venv/bin/activate
-  fi
+	python3 -m venv netspresso-venv
+	source netspresso-venv/bin/activate
+	pip3 install --upgrade pip
 
   # Insall requirermnts
 	pip3 install -r requirements.txt
