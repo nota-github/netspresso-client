@@ -1,5 +1,5 @@
 # If the user is already in the netspresso-client
-if [ $(basename $(pwd)) == netspresso-client ]
+if [ basename "$PWD" == netspresso-client ]
 then
   # Get pull from Github repository
   git pull
