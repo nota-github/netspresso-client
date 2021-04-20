@@ -13,7 +13,7 @@ fi
 if [ ! -d netspresso-client ]
 then
 	# Get clone from Github repository
-	git clone https://github.com/nota-github/netspresso-client -b wehong
+	git clone https://github.com/nota-github/netspresso-client -b develop
 	cd netspresso-client
 
 	# Make new venv
