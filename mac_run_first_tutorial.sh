@@ -4,10 +4,10 @@ then
   # Get pull from Github repository
   git pull
   cd ..
-  if [ -e run_first_tutorial.sh ]
-  then
-		rm run_first_tutorial.sh
-  fi
+#  if [ -e run_first_tutorial.sh ]
+#  then
+#		rm run_first_tutorial.sh
+#  fi
 fi
 
 if [ ! -d netspresso-client ]
@@ -24,10 +24,10 @@ then
   # Insall requirermnts
 	pip3 install -r requirements.txt
   
-  if [ -e ../run_first_tutorial.sh ]
-  then
-		rm ../run_first_tutorial.sh
-  fi
+#  if [ -e ../run_first_tutorial.sh ]
+#  then
+#		rm ../run_first_tutorial.sh
+#  fi
 
 else
 	cd netspresso-client
