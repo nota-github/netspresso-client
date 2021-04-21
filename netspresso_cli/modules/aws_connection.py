@@ -76,6 +76,9 @@ def upload_file_to_s3(aws_auth_info, src_path, dst_path):
 def download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url):
     s3 = boto3.resource(
         "s3",
+        aws_access_key_id=aws_auth_info["aws_access_key_id"],
+        aws_secret_access_key=aws_auth_info["aws_secret_access_key"],
+        region_name=aws_auth_info["region_name"],
     )
     bucket_url, key = s3_url.split("/", 2)[-1].split("/", 1)
     bucket_id = bucket_url.split(".")[0]
