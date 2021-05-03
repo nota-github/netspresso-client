@@ -47,9 +47,11 @@ def main():
     with open(args.config) as f:
         configs = yaml.safe_load(f.read())
     comp_sess = CompSession()
-    comp_sess.upload_config(config_path=args.config, storage_config=configs["STORAGE"])
-    comp_sess.upload_data(data_path=configs["DATASET"]["path"], dataset_type=configs["DATASET"]["type"], storage_config=configs["STORAGE"])
-    comp_sess.upload_model(model_path=configs["INPUT"]["path"], model_type=configs["INPUT"]["type"], storage_config=configs["STORAGE"])
+    # upload config, data, model
+    comp_sess.upload_config(config_path=args.config, storage_config=configs["storage"])
+    comp_sess.upload_data(data_path=configs["dataset"]["path"], dataset_type=configs["dataset"]["type"], storage_config=configs["storage"])
+    comp_sess.upload_model(model_path=configs["input"]["path"], model_type=configs["input"]["type"], storage_config=configs["storage"])
+    # Do compression session
     compression_id = comp_sess.compress()
     print(f"compression id: {compression_id}")
     #################################################################################################
