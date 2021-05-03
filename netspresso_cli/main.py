@@ -31,9 +31,19 @@ from netspresso_cli.modules.monitoring_apis import delete_compression_id_in_task
 from netspresso_cli.modules.common import get_argparse
 from netspresso_cli.modules.common import calculate_duration
 
+from netspresso_cli.modules.common import get_aws_info
+from netspresso_cli.modules.common import check_login
+
 def main():
     ################### DO COMPRESSION ##############################################################
     args = get_argparse()
+    if args.login:
+        get_aws_info()
+        exit(0)
+    if not check_login():
+        print("please login first")
+        print("main.py --login")
+        exit(0)
     with open(args.config) as f:
         configs = yaml.safe_load(f.read())
     comp_sess = CompSession()

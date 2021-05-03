@@ -4,6 +4,7 @@
 
 # Ignore netspresso-venv
 netspresso-venv/
+_credentials.json
 
 # user files
 result/
