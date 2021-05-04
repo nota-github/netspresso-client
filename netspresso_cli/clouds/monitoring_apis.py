@@ -3,8 +3,8 @@ import os
 import json
 from urllib.request import urlretrieve
 from netspresso_cli import settings
-from netspresso_cli.modules.types import ReturnDataType, DataSetFormat
-from netspresso_cli.modules.codec import encoder
+from netspresso_cli.clouds.types import ReturnDataType, DataSetFormat
+from netspresso_cli.clouds.codec import encoder
 
 
 def get_compression_status_list(
