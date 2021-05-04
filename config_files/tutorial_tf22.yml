@@ -3,10 +3,10 @@ TASK: classification
 COMPRESSION_ALIAS: tutorial_tf22_yaml
 COMPRESSION_CONSTRAINTS:
   objective: accuracy
-  acceptable_drop_percent_point: 5.0
+  acceptable_drop_percent_point: 75.0
 INPUT:
   type: pb
-  path: "C:\\Users\\NOTA2001\\Desktop\\tf22_vgg16_pretrain"
+  path: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/tutorials/models/tf22_vgg16_pretrain.zip
   image_height_width: [32, 32]
   test_accuracy_percent: 79.66
 OUTPUT:
@@ -15,7 +15,8 @@ OUTPUT:
   test_device: pc
 DATASET:
   type: imagefolder
-  path: "C:\\Users\\NOTA2001\\Desktop\\CIFAR10"
+  path:
+    zip_dir: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/CIFAR10-images.zip
   dataloader_config:
     preprocessing:
       rescale_value: 255
@@ -27,3 +28,4 @@ STORAGE:
   s3_bucket_name: "nota-netspresso-bucket"
   region_name: "us-east-2"
   destination_path: "/example_tf22_yaml" # specify folder name in the destination storage
+MOCK_TEST: True

@@ -5,10 +5,10 @@ import os
 from typing import Dict
 from pathlib import Path
 
-from netspresso_cli.modules.types import DataSetFormat, ReturnDataType, InputModelType
-from netspresso_cli.modules.types import ModelTypeError
-from netspresso_cli.modules import aws_connection
-from netspresso_cli.modules import monitoring_apis
+from netspresso_cli.clouds.types import DataSetFormat, ReturnDataType, InputModelType
+from netspresso_cli.clouds.types import ModelTypeError
+from netspresso_cli.clouds.aws import connection as aws_connection
+from netspresso_cli.clouds import monitoring_apis
 from netspresso_cli import settings
 
 

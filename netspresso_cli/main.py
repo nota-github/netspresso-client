@@ -15,24 +15,24 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from netspresso_cli import settings
-from netspresso_cli.modules import aws_connection
-from netspresso_cli.modules.types import ReturnDataType, DataSetFormat, InputModelType
-from netspresso_cli.modules.compression_sessions import CompSession
-from netspresso_cli.modules.monitoring_apis import get_compression_status_list
-from netspresso_cli.modules.monitoring_apis import get_compression_status
-from netspresso_cli.modules.monitoring_apis import get_worker_status_list
-from netspresso_cli.modules.monitoring_apis import get_task_queue_size
-from netspresso_cli.modules.monitoring_apis import get_result
-from netspresso_cli.modules.monitoring_apis import download_log_file
-from netspresso_cli.modules.monitoring_apis import download_original_type_compressed_model_file
-from netspresso_cli.modules.monitoring_apis import download_converted_type_compressed_model_file
-from netspresso_cli.modules.monitoring_apis import delete_compression_id_in_task_queue
+from netspresso_cli.clouds.aws import connection
+from netspresso_cli.clouds.types import ReturnDataType, DataSetFormat, InputModelType
+from netspresso_cli.clouds.compression_sessions import CompSession
+from netspresso_cli.clouds .monitoring_apis import get_compression_status_list
+from netspresso_cli.clouds.monitoring_apis import get_compression_status
+from netspresso_cli.clouds.monitoring_apis import get_worker_status_list
+from netspresso_cli.clouds.monitoring_apis import get_task_queue_size
+from netspresso_cli.clouds.monitoring_apis import get_result
+from netspresso_cli.clouds.monitoring_apis import download_log_file
+from netspresso_cli.clouds.monitoring_apis import download_original_type_compressed_model_file
+from netspresso_cli.clouds.monitoring_apis import download_converted_type_compressed_model_file
+from netspresso_cli.clouds.monitoring_apis import delete_compression_id_in_task_queue
 
-from netspresso_cli.modules.common import get_argparse
-from netspresso_cli.modules.common import calculate_duration
+from netspresso_cli.clouds.common import get_argparse
+from netspresso_cli.clouds.common import calculate_duration
 
-from netspresso_cli.modules.common import get_aws_info
-from netspresso_cli.modules.common import check_login
+from netspresso_cli.clouds.common import get_aws_info
+from netspresso_cli.clouds.common import check_login
 
 def main():
     ################### DO COMPRESSION ##############################################################
