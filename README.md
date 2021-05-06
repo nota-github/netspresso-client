@@ -97,7 +97,7 @@ aws_auth_info = aws_connection.get_auth()
 
 -  upload_data
 
-  ``````python
+  ```python
   """Upload data to s3.
   
   Args:
@@ -105,7 +105,7 @@ aws_auth_info = aws_connection.get_auth()
     storage_config (Dict[str, Any]): storage config
     dataset_type (str): type of dataset: ["imagefolder", "npy"]
   """
-  ``````
+  ```
 
 - upload_model
 
