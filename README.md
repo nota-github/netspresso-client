@@ -94,7 +94,7 @@ aws_auth_info = aws_connection.get_auth()
   """
   ```
 
--  upload_data
+- upload_data
   ```python
   """Upload data to s3.
   
@@ -134,10 +134,13 @@ netspresso_server 쪽으로 monitoring 요청을 보내는 함수들의 모음
 
 ## Run
 requirements.txt가 설치된 환경에서 구동
+
 AWS 로그인 정보가 필요
 ```python
 export PYTHONPATH=. && python netspresso_cli/main.py --login
 ```
+
+구동 example
 ```python
 export PYTHONPATH=. && python netspresso_cli/main.py --config config_files/example1.yaml
 ```
