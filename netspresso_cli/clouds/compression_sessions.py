@@ -61,7 +61,6 @@ class CompSession:
             self.config = yaml.safe_load(self.config_yaml)
         aws_auth_info = aws_connection.get_auth()
         config_filename = os.path.split(config_path)[1]
-       :
         dst_path = (Path(storage_config["destination_path"].lstrip("/")) / "config" / config_filename).as_posix()
         self.s3_config_url = aws_connection.upload_file_to_s3(
             aws_auth_info, config_path, dst_path

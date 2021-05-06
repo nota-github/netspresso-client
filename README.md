@@ -137,16 +137,11 @@ a server 쪽으로 요청을 보내는 함수들의 모음
 각 API requests들의 return은 [netspresso-server](https://github.com/nota-github/netspresso-server/blob/develop/netspresso_server/urls.py) 를 확인
 
 ## Run
-
+requirements.txt가 설치된 환경에서 구동
+AWS 로그인 정보가 필요
 ```python
-python netspresso_cli/main.py --config config_files/example1.yaml
-```# upload config, data, model
-    comp_sess.upload_config(config_path=args.config, storage_config=configs["storage"])
-    comp_sess.upload_data(data_path=configs["dataset"]["path"], dataset_type=configs["dataset"]["type"], storage_config=configs["storage"])
-    comp_sess.upload_model(model_path=configs["input"]["path"], model_type=configs["input"]["type"], storage_config=configs["storage"])
-    # Do compression session
-    compression_id = comp_sess.compress()
-    p Run
-```bash
-sh run_first_tutorial.sh
+export PYTHONPATH=. && python netspresso_cli/main.py --login
+```
+```python
+export PYTHONPATH=. && python netspresso_cli/main.py --config config_files/example1.yaml
 ```
