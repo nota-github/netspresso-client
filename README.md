@@ -82,57 +82,53 @@ aws_auth_info = aws_connection.get_auth()
 #### Class methods
 
 - upload_config
-
   ```python
   """Upload config to s3.
   
   Args:
-  	config_path (str): config yaml file path 
-  	storage_config (Dict[str, Any]): storage config
+      config_path (str): config yaml file path 
+      storage_config (Dict[str, Any]): storage config
   
   Return:
-  	bool: Whether its valid config
+      bool: Whether its valid config
   """
   ```
 
 -  upload_data
-
   ```python
   """Upload data to s3.
   
   Args:
-  	data_path (str):  
-    storage_config (Dict[str, Any]): storage config
-    dataset_type (str): type of dataset: ["imagefolder", "npy"]
+      data_path (str):  
+      storage_config (Dict[str, Any]): storage config
+      dataset_type (str): type of dataset: ["imagefolder", "npy"]
   """
   ```
 
 - upload_model
-
   ```python
   """Upload model.
   
   Args:
-  	model_path (str): path to model
-    storage_config (Dict[str, Any]): storage config from user_config
-    model_type (str): type of model [pb, h5]
+      model_path (str): path to model
+      storage_config (Dict[str, Any]): storage config from user_config
+      model_type (str): type of model [pb, h5]
   """
   ```
 
 - compress
-
   ```python
   """Requests create to core.
   
   Return:
-  	str: compression id
+      str: compression id
   """
   ```
  
 
 ### 2. Monitoring(modules/monitoring_apis.py)
 
-a server 쪽으로 요청을 보내는 함수들의 모음
+netspresso_server 쪽으로 monitoring 요청을 보내는 함수들의 모음
 
 각 API requests들의 return은 [netspresso-server](https://github.com/nota-github/netspresso-server/blob/develop/netspresso_server/urls.py) 를 확인
 
