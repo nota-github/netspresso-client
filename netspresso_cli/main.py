@@ -47,9 +47,11 @@ def main():
     with open(args.config) as f:
         configs = yaml.safe_load(f.read())
     comp_sess = CompSession()
+    # upload config, data, model
     comp_sess.upload_config(config_path=args.config, storage_config=configs["STORAGE"])
     comp_sess.upload_data(data_path=configs["DATASET"]["path"], dataset_type=configs["DATASET"]["type"], storage_config=configs["STORAGE"])
     comp_sess.upload_model(model_path=configs["INPUT"]["path"], model_type=configs["INPUT"]["type"], storage_config=configs["STORAGE"])
+    # Do compression session
     compression_id = comp_sess.compress()
     print(f"compression id: {compression_id}")
     #################################################################################################
@@ -86,14 +88,14 @@ def main():
     #################################################################################################
 
     ##################### DOWNLOAD RESULT FILES######################################################
-    aws_auth_info = aws_connection.get_auth()
+    aws_auth_info = connection.get_auth()
     result = get_result(compression_id, return_type=ReturnDataType.JSON)
     print(result)
-    log_file = aws_connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_log"])
+    log_file = connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_log"])
     print(f"[*] log file(filename: {log_file}) saved")
-    input_type_compressed_model = aws_connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_input_type_compressed_model"])
+    input_type_compressed_model = connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_input_type_compressed_model"])
     print(f"[*] input type compressed model(filename: {input_type_compressed_model}) saved")
-    converted_type_compressed_model = aws_connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_converted_type_compressed_model"])
+    converted_type_compressed_model = connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_converted_type_compressed_model"])
     print(f"[*] converted type compressed model(filename: {converted_type_compressed_model}) saved")
     ################################################################################################
 

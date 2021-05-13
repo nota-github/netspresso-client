@@ -10,6 +10,17 @@ from netspresso_cli.clouds.codec import encoder
 def get_compression_status_list(
     return_type: ReturnDataType = ReturnDataType.JSON,
 ) -> ReturnDataType:
+    """Get compression status list.
+    
+    compression status list consists as follows,
+
+    [*] compression status list as DATA_FRAME format
+                               compression_id  compression_number config_type  ... status         updated_time     worker_assigned
+    0    efb4e10e-ec4e-4ea4-b82b-ce645ad30045                 124  constraint  ...      0  2021-05-04 06:48:09  172.31.16.109:8000
+    1    67aabfff-a703-4bf7-887f-1720d2a6ebc5                 125  constraint  ...      0  2021-05-04 06:48:09  172.31.16.109:8000
+    2    d3da0a91-766c-4477-ad62-eb92b137d2ed                 126  constraint  ...      0  2021-05-04 06:48:09  172.31.16.109:8000
+    ..                                    ...                 ...         ...  ...    ...                  ...                 ...
+    """
     r = requests.get(
         f"http://{settings.API_SERVER.HOST}:{settings.API_SERVER.PORT}/api/v1/compressions"
     )

@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+"""Compression session
+
+Compression session 클래스에 대한 모듈
+
+CompSession은 아래 기능을 수행함
+    1. config, data, model s3로 업로드
+    2. compression session 수행함
+"""
+
+
 import yaml
 import json
 import requests
@@ -14,6 +25,7 @@ from netspresso_cli import settings
 
 class CompSession:
     def __init__(self, compression_id=None):
+        """Initialize."""
         self.compression_id = compression_id
         self.config = None
         self.config_yaml = None
@@ -27,7 +39,16 @@ class CompSession:
         self.dataset_type = None
         self.config_json = None
 
-    def upload_config(self, config_path, storage_config: Dict):
+    def upload_config(self, config_path: str, storage_config: Dict):
+        """Upload config to s3.
+
+        Args:
+            config_path (str): config yaml file path 
+            storage_config (Dict[str, Any]): storage config
+    
+        Return:
+            bool: Whether its valid config
+        """
         # check parameters
         assert os.path.exists(config_path), "[ERROR] config file does'not exist"
         assert os.path.isdir(config_path)==False, "[ERROR] config path is dir, but expected file"
@@ -40,13 +61,19 @@ class CompSession:
             self.config = yaml.safe_load(self.config_yaml)
         aws_auth_info = aws_connection.get_auth()
         config_filename = os.path.split(config_path)[1]
-        
         dst_path = (Path(storage_config["destination_path"].lstrip("/")) / "config" / config_filename).as_posix()
         self.s3_config_url = aws_connection.upload_file_to_s3(
             aws_auth_info, config_path, dst_path
         )
 
     def upload_data(self, data_path, storage_config: Dict, dataset_type="imagefolder"):
+        """Upload data to s3.
+
+        Args:
+            data_path (str):  
+            storage_config (Dict[str, Any]): storage config
+            dataset_type (str): type of dataset: ["imagefolder", "npy"]
+        """
         if isinstance(data_path, dict):
             return
         if dataset_type == "imagefolder" and not isinstance(data_path, dict):
@@ -83,6 +110,13 @@ class CompSession:
         )
 
     def upload_model(self, model_path, storage_config: Dict, model_type="pb"):
+        """Upload model.
+
+        Args:
+            model_path (str): path to model
+            storage_config (Dict[str, Any]): storage config from user_config
+            model_type (str): type of model [pb, h5]
+        """
         if model_path.startswith("http"):
            return
         else: 
@@ -111,9 +145,14 @@ class CompSession:
             raise ModelTypeError("Model Type Error", "invalid model type")
         
 
-    def compress(self):
+    def compress(self) -> str:
+        """Requests create to core.
+        
+        Return:
+            str: Compression id
+        """
         config_yaml = self.config_yaml
-        assert is_fulfilled_configs(config_yaml)==True, "[ERROR] config is invalid"
+        assert is_fulfilled_configs(config_yaml), "[ERROR] config is invalid"
 
         configs_dict = yaml.safe_load(config_yaml)
         if self.s3_model_url:
@@ -139,38 +178,44 @@ class CompSession:
 
 
 def is_fulfilled_configs(config_yaml: str) -> bool:
-    """
-    ==================
-    example config
-    ==================
+    """Check whether config is complete.
 
-TASK: classification
-COMPRESSION_ALIAS: test-compression
-COMPRESSION_CONSTRAINTS:
-  objective: accuracy
-  acceptable_drop_percent_point: 20.0
-INPUT:
-  type: pb # pb, h5
-  path: "C:\\Users\\NOTA2001\\Desktop\\vgg_model" # url or local path. # model_path = "C:\\Users\\NOTA2001\\Desktop\\0402"
-  test_accuracy_percent: 50.0
-  image_height_width: [32, 32]
-OUTPUT:
-  model_type: tflite # h5
-  dtype: float16
-  test_device: pc # raspberrypi
-DATASET:
-  type: imagefolder # imagefolder
-  path: "C:\\Users\\NOTA2001\\Desktop\\CIFAR10" # url or local path # data_path = "C:\\Users\\NOTA2001\\Desktop\\CIFAR10-jh"
-  dataloader_config:
-    preprocessing:
-      rescale_value: 255
-      mean: [0.0, 0.0, 0.0]
-      std: [1.0, 1.0, 1.0]
-    default_batch_size: 16
-STORAGE:
-  type: s3
-  destination_path: "/vgg-test" # specify folder name in the destination storage
-"""
+    Args:
+        config_yaml (str): config yaml file path 
+
+    Return:
+        bool: Whether its valid config
+
+    Examples:
+        Example config(yaml) file structure.
+        # example.yaml
+        TASK: classification
+        COMPRESSION_ALIAS: test-compression
+        COMPRESSION_CONSTRAINTS:
+          objective: accuracy
+          acceptable_drop_percent_point: 20.0
+        INPUT:
+          type: pb # pb, h5
+          path: "C:\\Users\\NOTA2001\\Desktop\\vgg_model" # url or local path. # model_path = "C:\\Users\\NOTA2001\\Desktop\\0402"
+          test_accuracy_percent: 50.0
+          image_height_width: [32, 32]
+        OUTPUT:
+          model_type: tflite # h5
+          dtype: float16
+          test_device: pc # raspberrypi
+        DATASET:
+          type: imagefolder # imagefolder
+          path: "C:\\Users\\NOTA2001\\Desktop\\CIFAR10" # url or local path # data_path = "C:\\Users\\NOTA2001\\Desktop\\CIFAR10-jh"
+          dataloader_config:
+            preprocessing:
+              rescale_value: 255
+              mean: [0.0, 0.0, 0.0]
+              std: [1.0, 1.0, 1.0]
+            default_batch_size: 16
+        STORAGE:
+          type: s3
+          destination_path: "/vgg-test" # specify folder name in the destination storage
+    """
     retn = True
 
     configs_dict = yaml.safe_load(config_yaml)
