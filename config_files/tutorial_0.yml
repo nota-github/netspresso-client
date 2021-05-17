@@ -6,7 +6,7 @@ COMPRESSION_CONSTRAINTS:
   acceptable_drop_percent_point: 75.0
 INPUT:
   type: pb
-  path: https://netspresso-test-bucket1.s3.us-east-2.amazonaws.com/models/vgg_model.zip
+  path: https://netspresso-test-bucket2.s3.us-east-2.amazonaws.com/models/vgg_model.zip
   image_height_width: [32, 32]
   test_accuracy_percent: 82.0
 OUTPUT:
@@ -16,7 +16,7 @@ OUTPUT:
 DATASET:
   type: imagefolder
   path:
-    zip_dir: https://netspresso-test-bucket1.s3.us-east-2.amazonaws.com/datasets/CIFAR10-images.zip
+    zip_dir: https://netspresso-test-bucket2.s3.us-east-2.amazonaws.com/datasets/CIFAR10-images.zip
   dataloader_config:
     preprocessing:
       rescale_value: 255
@@ -25,6 +25,6 @@ DATASET:
     default_batch_size: 16
 STORAGE:
   type: s3
-  s3_bucket_name: "nota-netspresso-bucket"
+  s3_bucket_name: "netspresso-test-bucket2"
   region_name: "us-east-2"
-  destination_path: "/example1_yaml" # specify folder name in the destination storage
+  destination_path: "/example2_yaml" # specify folder name in the destination storage

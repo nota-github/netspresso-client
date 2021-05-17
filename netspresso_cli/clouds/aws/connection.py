@@ -18,7 +18,7 @@ def get_auth():
     aws_auth_info = {}
     aws_auth_info["aws_access_key_id"] = aws_access_key_id
     aws_auth_info["aws_secret_access_key"] = aws_secret_access_key
-    aws_auth_info["bucket_name"] = "donguklim-netspresso-bucket" #TODO: change to input
+    aws_auth_info["bucket_name"] = "netspresso-test-bucket2"
     aws_auth_info["region_name"] = "us-east-2"
     return aws_auth_info
 

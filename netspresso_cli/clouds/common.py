@@ -6,9 +6,15 @@ import settings
 
 def get_argparse():
     parser = argparse.ArgumentParser()
+    parser.add_argument("command", help="login, run")
     parser.add_argument("-c", "--config", required=False, help="yaml config path")
-    parser.add_argument("-l", "--login", required=False, help="login aws", action="store_true")
     args = parser.parse_args()
+
+    if args.command != "login" and args.config == None:
+        print("usage(login): main.py login")
+        print("usage(run): main.py run --config config_files/tutorial_0.yml")
+        exit(0)
+
 
     return args
 
