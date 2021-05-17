@@ -6,7 +6,7 @@ COMPRESSION_CONSTRAINTS:
   acceptable_drop_percent_point: 5.0
 INPUT:
   type: pb # h5
-  path: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/models/vgg_model.zip
+  path: https://netspresso-test-bucket1.s3.us-east-2.amazonaws.com/datasets/CIFAR10-images.zip/models/vgg_model.zip
   image_height_width: [32, 32]
   test_accuracy_percent: 82.0
 OUTPUT:
@@ -16,10 +16,10 @@ OUTPUT:
 DATASET:
   type: npy
   path:
-    train_x: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/npy/train_x.npy
-    train_y: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/npy/train_y.npy
-    test_x: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/npy/test_x.npy
-    test_y: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/npy/test_y.npy
+    train_y: https://netspresso-test-bucket1.s3.us-east-2.amazonaws.com/datasets/npy/train_y.npy
+    train_x: https://netspresso-test-bucket1.s3.us-east-2.amazonaws.com/datasets/npy/train_x.npy
+    test_x: https://netspresso-test-bucket1.s3.us-east-2.amazonaws.com/datasets/npy/test_x.npy
+    test_y: https://netspresso-test-bucket1.s3.us-east-2.amazonaws.com/datasets/npy/test_y.npy
   dataloader_config:
     preprocessing:
       rescale_value: 255

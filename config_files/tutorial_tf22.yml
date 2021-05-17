@@ -6,7 +6,7 @@ COMPRESSION_CONSTRAINTS:
   acceptable_drop_percent_point: 75.0
 INPUT:
   type: pb
-  path: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/tutorials/models/tf22_vgg16_pretrain.zip
+  path: https://netspresso-test-bucket1.s3.us-east-2.amazonaws.com/models/tf22_vgg16_pretrain.zip
   image_height_width: [32, 32]
   test_accuracy_percent: 79.66
 OUTPUT:
@@ -16,7 +16,7 @@ OUTPUT:
 DATASET:
   type: imagefolder
   path:
-    zip_dir: https://nota-netspresso-bucket.s3.us-east-2.amazonaws.com/lgcns/datasets/CIFAR10-images.zip
+    zip_dir: https://netspresso-test-bucket1.s3.us-east-2.amazonaws.com/datasets/CIFAR10-images.zip
   dataloader_config:
     preprocessing:
       rescale_value: 255
