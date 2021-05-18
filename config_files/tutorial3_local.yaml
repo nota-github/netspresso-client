@@ -1,6 +1,8 @@
-# Tutorial 3
+# Tutorial 3: local path
+# Feeding model, dataset from local path
+# User should change model path, dataset path
 TASK: classification
-COMPRESSION_ALIAS: tutorial_3_yaml
+COMPRESSION_ALIAS: tutorial3_local_yaml
 COMPRESSION_CONSTRAINTS:
   objective: accuracy
   acceptable_drop_percent_point: 5.0

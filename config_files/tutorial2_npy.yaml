@@ -1,6 +1,8 @@
-# Tutorial 2
+# Tutorial 2: npy
+# Feeding dataset as a form of npy files.
+# Note that it takes longer time since `acceptable_drop_percent_point` is tighter than other tutorial(accepts within 5% of drop)
 TASK: classification
-COMPRESSION_ALIAS: tutorial_2_yaml
+COMPRESSION_ALIAS: tutorial2_npy_yaml
 COMPRESSION_CONSTRAINTS:
   objective: accuracy
   acceptable_drop_percent_point: 5.0
