@@ -2,11 +2,11 @@
 
 ## Overview
 
-- tutorial0_quickstart.yaml: 모델 경량화 과정 없이 전체 과정의 동작 및 반환 데이터를 확인하기 위한 quickstart
-- tutorial1_imagefolder.yaml: 이미지폴더형태 데이터셋을 활용한 compression
-- tutorial2_npy.yaml: npy파일 데이터셋을 활용한 compression
-- tutorial3_local.yaml: local에서 입력해주는 모델, 데이터셋에 대한 compression
-- tutorial4_tf22.yaml: tf 2.2 버전에서의 compression(tf 2.3에 대해서는 동작하지 않음)
+- `tutorial0_quickstart.yaml`: 모델 경량화 과정 없이 전체 과정의 동작 및 반환 데이터를 확인하기 위한 quickstart
+- `tutorial1_imagefolder.yaml`: 이미지폴더형태 데이터셋을 활용한 compression
+- `tutorial2_npy.yaml`: npy파일 데이터셋을 활용한 compression
+- `tutorial3_local.yaml`: local에서 입력해주는 모델, 데이터셋에 대한 compression
+- `tutorial4_tf22.yaml`: tf 2.2 버전에서의 compression(tf 2.3에 대해서는 동작하지 않음)
 
 ## Note
 
