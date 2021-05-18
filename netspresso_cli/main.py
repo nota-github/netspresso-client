@@ -37,12 +37,12 @@ from netspresso_cli.clouds.common import check_login
 def main():
     ################### DO COMPRESSION ##############################################################
     args = get_argparse()
-    if args.login:
+    if args.command == "login":
         get_aws_info()
         exit(0)
     if not check_login():
         print("please login first")
-        print("main.py --login")
+        print("main.py login")
         exit(0)
     with open(args.config) as f:
         configs = yaml.safe_load(f.read())
