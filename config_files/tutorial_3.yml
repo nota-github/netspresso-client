@@ -3,12 +3,12 @@ TASK: classification
 COMPRESSION_ALIAS: tutorial_3_yaml
 COMPRESSION_CONSTRAINTS:
   objective: accuracy
-  acceptable_drop_percent_point: 20.0
+  acceptable_drop_percent_point: 5.0
 INPUT:
   type: pb # pb, h5
   path: "C:\\Users\\NOTA2001\\Desktop\\vgg_model" # url or local path. # model_path = "C:\\Users\\NOTA2001\\Desktop\\0402"
   image_height_width: [32, 32]
-  test_accuracy_percent: 50.0
+  test_accuracy_percent: 82.0
 OUTPUT:
   model_type: tflite # h5
   dtype: float16
