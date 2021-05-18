@@ -3,7 +3,7 @@ TASK: classification
 COMPRESSION_ALIAS: tutorial_tf22_yaml
 COMPRESSION_CONSTRAINTS:
   objective: accuracy
-  acceptable_drop_percent_point: 75.0
+  acceptable_drop_percent_point: 5.0
 INPUT:
   type: pb
   path: https://netspresso-test-bucket1.s3.us-east-2.amazonaws.com/models/tf22_vgg16_pretrain.zip
