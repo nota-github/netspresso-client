@@ -29,4 +29,3 @@ STORAGE:
   s3_bucket_name: "nota-netspresso-bucket"
   region_name: "us-east-2"
   destination_path: "/example_tf22_yaml" # specify folder name in the destination storage
-MOCK_TEST: True
