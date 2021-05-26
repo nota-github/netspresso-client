@@ -2,6 +2,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/vscode,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=vscode,python
 
+# Ignore netspresso-venv
+netspresso-venv/
+_credentials.json
+
 # user files
 result/
 user_files/

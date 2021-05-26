@@ -1,0 +1,30 @@
+# Tutorial 1
+TASK: classification
+COMPRESSION_ALIAS: tutorial_0_yaml
+COMPRESSION_CONSTRAINTS:
+  objective: accuracy
+  acceptable_drop_percent_point: 75.0
+INPUT:
+  type: pb
+  path: https://netspresso-test-bucket2.s3.us-east-2.amazonaws.com/models/vgg_model.zip
+  image_height_width: [32, 32]
+  test_accuracy_percent: 82.0
+OUTPUT:
+  model_type: tflite
+  dtype: float16
+  test_device: pc
+DATASET:
+  type: imagefolder
+  path:
+    zip_dir: https://netspresso-test-bucket2.s3.us-east-2.amazonaws.com/datasets/CIFAR10-images.zip
+  dataloader_config:
+    preprocessing:
+      rescale_value: 255
+      mean: [0.0, 0.0, 0.0]
+      std: [1.0, 1.0, 1.0]
+    default_batch_size: 16
+STORAGE:
+  type: s3
+  s3_bucket_name: "netspresso-test-bucket2"
+  region_name: "us-east-2"
+  destination_path: "/example2_yaml" # specify folder name in the destination storage

@@ -1,14 +1,26 @@
 import requests
 import os
+import json
 from urllib.request import urlretrieve
 from netspresso_cli import settings
-from netspresso_cli.modules.types import ReturnDataType, DataSetFormat
-from netspresso_cli.modules.codec import encoder
+from netspresso_cli.clouds.types import ReturnDataType, DataSetFormat
+from netspresso_cli.clouds.codec import encoder
 
 
 def get_compression_status_list(
     return_type: ReturnDataType = ReturnDataType.JSON,
 ) -> ReturnDataType:
+    """Get compression status list.
+    
+    compression status list consists as follows,
+
+    [*] compression status list as DATA_FRAME format
+                               compression_id  compression_number config_type  ... status         updated_time     worker_assigned
+    0    efb4e10e-ec4e-4ea4-b82b-ce645ad30045                 124  constraint  ...      0  2021-05-04 06:48:09  172.31.16.109:8000
+    1    67aabfff-a703-4bf7-887f-1720d2a6ebc5                 125  constraint  ...      0  2021-05-04 06:48:09  172.31.16.109:8000
+    2    d3da0a91-766c-4477-ad62-eb92b137d2ed                 126  constraint  ...      0  2021-05-04 06:48:09  172.31.16.109:8000
+    ..                                    ...                 ...         ...  ...    ...                  ...                 ...
+    """
     r = requests.get(
         f"http://{settings.API_SERVER.HOST}:{settings.API_SERVER.PORT}/api/v1/compressions"
     )
@@ -74,3 +86,19 @@ def download_file(compression_id: str, dst_folder_path:str, target_url: str)->No
             print(f"error occured! {e}")
             exit(0)
     return target_filename
+
+
+def delete_compression_id_in_task_queue(compression_id: str)->None:
+    """delete compression_id in task queue
+    (example)
+    print(delete_compression_id_in_task_queue("ff2d0848-5daf-48de-9e61-0e1eb7761766"))
+    """
+    data = {
+        "compression_id": compression_id,  # yaml config
+    }
+    headers = {'Content-Type': 'application/json; charset=utf-8'}
+    r = requests.post(
+        f"http://{settings.API_SERVER.HOST}:{settings.API_SERVER.PORT}/api/v1/task_queue/delete",
+        data=json.dumps(data), headers=headers
+    )
+    return r.json() # return compression_id

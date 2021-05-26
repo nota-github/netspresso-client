@@ -1,6 +1,6 @@
 import pandas as pd
 import yaml
-from netspresso_cli.modules.types import ReturnDataType
+from netspresso_cli.clouds.types import ReturnDataType
 
 
 def encoder(json_data, output_format: ReturnDataType = ReturnDataType.JSON):

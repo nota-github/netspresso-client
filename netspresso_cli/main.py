@@ -15,29 +15,43 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from netspresso_cli import settings
-from netspresso_cli.modules import aws_connection
-from netspresso_cli.modules.types import ReturnDataType, DataSetFormat, InputModelType
-from netspresso_cli.modules.compression_sessions import CompSession
-from netspresso_cli.modules.monitoring_apis import get_compression_status_list
-from netspresso_cli.modules.monitoring_apis import get_compression_status
-from netspresso_cli.modules.monitoring_apis import get_worker_status_list
-from netspresso_cli.modules.monitoring_apis import get_task_queue_size
-from netspresso_cli.modules.monitoring_apis import get_result
-from netspresso_cli.modules.monitoring_apis import download_log_file
-from netspresso_cli.modules.monitoring_apis import download_original_type_compressed_model_file
-from netspresso_cli.modules.monitoring_apis import download_converted_type_compressed_model_file
-from netspresso_cli.modules.common import get_argparse
-from netspresso_cli.modules.common import calculate_duration
+from netspresso_cli.clouds.aws import connection
+from netspresso_cli.clouds.types import ReturnDataType, DataSetFormat, InputModelType
+from netspresso_cli.clouds.compression_sessions import CompSession
+from netspresso_cli.clouds .monitoring_apis import get_compression_status_list
+from netspresso_cli.clouds.monitoring_apis import get_compression_status
+from netspresso_cli.clouds.monitoring_apis import get_worker_status_list
+from netspresso_cli.clouds.monitoring_apis import get_task_queue_size
+from netspresso_cli.clouds.monitoring_apis import get_result
+from netspresso_cli.clouds.monitoring_apis import download_log_file
+from netspresso_cli.clouds.monitoring_apis import download_original_type_compressed_model_file
+from netspresso_cli.clouds.monitoring_apis import download_converted_type_compressed_model_file
+from netspresso_cli.clouds.monitoring_apis import delete_compression_id_in_task_queue
+
+from netspresso_cli.clouds.common import get_argparse
+from netspresso_cli.clouds.common import calculate_duration
+
+from netspresso_cli.clouds.common import get_aws_info
+from netspresso_cli.clouds.common import check_login
 
 def main():
     ################### DO COMPRESSION ##############################################################
     args = get_argparse()
+    if args.command == "login":
+        get_aws_info()
+        exit(0)
+    if not check_login():
+        print("please login first")
+        print("main.py login")
+        exit(0)
     with open(args.config) as f:
         configs = yaml.safe_load(f.read())
     comp_sess = CompSession()
+    # upload config, data, model
     comp_sess.upload_config(config_path=args.config, storage_config=configs["STORAGE"])
     comp_sess.upload_data(data_path=configs["DATASET"]["path"], dataset_type=configs["DATASET"]["type"], storage_config=configs["STORAGE"])
     comp_sess.upload_model(model_path=configs["INPUT"]["path"], model_type=configs["INPUT"]["type"], storage_config=configs["STORAGE"])
+    # Do compression session
     compression_id = comp_sess.compress()
     print(f"compression id: {compression_id}")
     #################################################################################################
@@ -74,14 +88,14 @@ def main():
     #################################################################################################
 
     ##################### DOWNLOAD RESULT FILES######################################################
-    aws_auth_info = aws_connection.get_auth()
+    aws_auth_info = connection.get_auth()
     result = get_result(compression_id, return_type=ReturnDataType.JSON)
     print(result)
-    log_file = aws_connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_log"])
+    log_file = connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_log"])
     print(f"[*] log file(filename: {log_file}) saved")
-    input_type_compressed_model = aws_connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_input_type_compressed_model"])
+    input_type_compressed_model = connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_input_type_compressed_model"])
     print(f"[*] input type compressed model(filename: {input_type_compressed_model}) saved")
-    converted_type_compressed_model = aws_connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_converted_type_compressed_model"])
+    converted_type_compressed_model = connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_converted_type_compressed_model"])
     print(f"[*] converted type compressed model(filename: {converted_type_compressed_model}) saved")
     ################################################################################################
 
