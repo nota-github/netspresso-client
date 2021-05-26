@@ -137,12 +137,12 @@ requirements.txt가 설치된 환경에서 구동
 
 AWS 로그인 정보가 필요
 ```python
-export PYTHONPATH=. && python netspresso_cli/main.py --login
+export PYTHONPATH=. && python netspresso_cli/main.py login
 ```
 
 구동 example
 ```python
-export PYTHONPATH=. && python netspresso_cli/main.py --config config_files/example1.yaml
+export PYTHONPATH=. && python netspresso_cli/main.py --config config_files/tutorial_tf22.yaml
 ```
 
 ### Terminal 예시
