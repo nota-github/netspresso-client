@@ -142,7 +142,7 @@ export PYTHONPATH=. && python netspresso_cli/main.py login
 
 구동 example
 ```python
-export PYTHONPATH=. && python netspresso_cli/main.py --config config_files/tutorial_tf22.yaml
+export PYTHONPATH=. && python netspresso_cli/main.py run --config config_files/tutorial_tf22.yml
 ```
 
 ### Terminal 예시
