@@ -18,7 +18,7 @@ from netspresso_cli import settings
 from netspresso_cli.clouds.aws import connection
 from netspresso_cli.clouds.types import ReturnDataType, DataSetFormat, InputModelType
 from netspresso_cli.clouds.compression_sessions import CompSession
-from netspresso_cli.clouds .monitoring_apis import get_compression_status_list
+from netspresso_cli.clouds.monitoring_apis import get_compression_status_list
 from netspresso_cli.clouds.monitoring_apis import get_compression_status
 from netspresso_cli.clouds.monitoring_apis import get_worker_status_list
 from netspresso_cli.clouds.monitoring_apis import get_task_queue_size
@@ -44,16 +44,21 @@ def main():
         print("please login first")
         print("main.py login")
         exit(0)
-    with open(args.config) as f:
-        configs = yaml.safe_load(f.read())
-    comp_sess = CompSession()
-    # upload config, data, model
-    comp_sess.upload_config(config_path=args.config, storage_config=configs["STORAGE"])
-    comp_sess.upload_data(data_path=configs["DATASET"]["path"], dataset_type=configs["DATASET"]["type"], storage_config=configs["STORAGE"])
-    comp_sess.upload_model(model_path=configs["INPUT"]["path"], model_type=configs["INPUT"]["type"], storage_config=configs["STORAGE"])
-    # Do compression session
-    compression_id = comp_sess.compress()
-    print(f"compression id: {compression_id}")
+    
+    if args.command == "run":
+        with open(args.config) as f:
+            configs = yaml.safe_load(f.read())
+        comp_sess = CompSession()
+        # upload config, data, model
+        comp_sess.upload_config(config_path=args.config, storage_config=configs["STORAGE"])
+        comp_sess.upload_data(data_path=configs["DATASET"]["path"], dataset_type=configs["DATASET"]["type"], storage_config=configs["STORAGE"])
+        comp_sess.upload_model(model_path=configs["INPUT"]["path"], model_type=configs["INPUT"]["type"], storage_config=configs["STORAGE"])
+        # Do compression session
+        compression_id = comp_sess.compress()
+        print(f"compression id: {compression_id}")
+    else:
+        print("invalid command")
+        exit(0)
     #################################################################################################
 
 
