@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class ReturnDataType(Enum):
     """return value types about api request"""
 
@@ -31,3 +30,8 @@ class ModelTypeError(Error):
     def __init__(self, expression, message):
         self.expression = expression
         self.message = message
+
+
+class API_SERVICE_TYPE(Enum):
+    CLOUD = 0
+    ONPREM = 1

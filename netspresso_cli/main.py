@@ -16,7 +16,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from netspresso_cli import settings
 from netspresso_cli.clouds.aws import connection
-from netspresso_cli.clouds.types import ReturnDataType, DataSetFormat, InputModelType
+from netspresso_cli.common.types import ReturnDataType, DataSetFormat, InputModelType
 from netspresso_cli.clouds.compression_sessions import CompSession
 from netspresso_cli.clouds .monitoring_apis import get_compression_status_list
 from netspresso_cli.clouds.monitoring_apis import get_compression_status
