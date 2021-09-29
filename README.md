@@ -8,6 +8,10 @@
 
 ## Code Flow(main.py)
 
+실행:  python main.py
+
+api list: api_list.py
+
 ### 1. Upload config, data, model
 
 ```python

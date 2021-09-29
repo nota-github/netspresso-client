@@ -1,111 +1,356 @@
-################# NETSPRESSO CLIENT ############################################################
-# client 프로그램은 client 프로그램으로서의 역할과 동시에 API에 대한 설명을 하고 있습니다.
-# 따라서 API동작에 대한 이해를 하기 쉽게, 과도한 추상화나 wrapping은 지양했습니다.
-# 
-# client 프로그램은 다음과 같이 세 부분으로 구성되어 있습니다.
-# 1. compression을 하는 부분(파일 업로드 포함)
-# 2. monitoring APIs 사용 부분
-# 3. 결과 출력 및 파일 다운로드 부분
-################################################################################################
-
-import time
+from __future__ import print_function, unicode_literals
 import sys
-import yaml
 import os
+import json
+from PyInquirer import style_from_dict, Token, prompt, Separator
+import time
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from netspresso_cli import settings
-from netspresso_cli.clouds.aws import connection
-from netspresso_cli.clouds.types import ReturnDataType, DataSetFormat, InputModelType
-from netspresso_cli.clouds.compression_sessions import CompSession
-from netspresso_cli.clouds .monitoring_apis import get_compression_status_list
-from netspresso_cli.clouds.monitoring_apis import get_compression_status
-from netspresso_cli.clouds.monitoring_apis import get_worker_status_list
-from netspresso_cli.clouds.monitoring_apis import get_task_queue_size
-from netspresso_cli.clouds.monitoring_apis import get_result
-from netspresso_cli.clouds.monitoring_apis import download_log_file
-from netspresso_cli.clouds.monitoring_apis import download_original_type_compressed_model_file
-from netspresso_cli.clouds.monitoring_apis import download_converted_type_compressed_model_file
-from netspresso_cli.clouds.monitoring_apis import delete_compression_id_in_task_queue
+from netspresso_cli.onprem import auth
+from netspresso_cli.onprem import monitoring_apis
+from netspresso_cli.onprem import compression
+from netspresso_cli.common import time_calc
+from netspresso_cli.common import network
 
-from netspresso_cli.clouds.common import get_argparse
-from netspresso_cli.clouds.common import calculate_duration
+# please look at __main__ code first!
 
-from netspresso_cli.clouds.common import get_aws_info
-from netspresso_cli.clouds.common import check_login
+style = style_from_dict({
+    Token.Separator: '#cc5454',
+    Token.QuestionMark: '#673ab7 bold',
+    Token.Selected: '#cc5454',  # default
+    Token.Pointer: '#673ab7 bold',
+    Token.Instruction: '',  # default
+    Token.Answer: '#f44336 bold',
+    Token.Question: '',
+})
 
-def main():
-    ################### DO COMPRESSION ##############################################################
-    args = get_argparse()
-    if args.command == "login":
-        get_aws_info()
-        exit(0)
-    if not check_login():
-        print("please login first")
-        print("main.py login")
-        exit(0)
-    with open(args.config) as f:
-        configs = yaml.safe_load(f.read())
-    comp_sess = CompSession()
-    # upload config, data, model
-    comp_sess.upload_config(config_path=args.config, storage_config=configs["STORAGE"])
-    comp_sess.upload_data(data_path=configs["DATASET"]["path"], dataset_type=configs["DATASET"]["type"], storage_config=configs["STORAGE"])
-    comp_sess.upload_model(model_path=configs["INPUT"]["path"], model_type=configs["INPUT"]["type"], storage_config=configs["STORAGE"])
-    # Do compression session
-    compression_id = comp_sess.compress()
-    print(f"compression id: {compression_id}")
-    #################################################################################################
+def get_user_id():
+    question_user_id = [
+        {
+            'type': 'input',
+            'message': 'user_id: ',
+            'name': 'user_id',
+        }
+    ]
+    answers = prompt(question_user_id, style=style)
+    return answers["user_id"]
 
 
+def get_user_pw():
+    question_user_pw = [
+        {
+            'type': 'input',
+            'message': 'user_pw: ',
+            'name': 'user_pw',
+        }
+    ]
+    answers = prompt(question_user_pw, style=style)
+    return answers["user_pw"]
 
-    ##################### MONITORING APIS EXAMPLE ###################################################
-    # if status == 3, break
+def select_main_task():
+    question_task = [
+        {
+            'type': 'list',
+            'message': 'Select a tasks',
+            'name': 'task',
+            'choices': [
+                Separator('= what do you want to do? (please login first) ='),
+                {
+                    'name': 'Login'
+                },
+                {
+                    'name': "Logout"
+                },
+                {
+                    'name': 'Create a compression'
+                },
+                {
+                    'name': 'Resume monitoring(last compression)'
+                },
+                {
+                    'name': 'Download result'
+                },
+                {
+                    'name': 'Exit'
+                }
+            ],
+            'validate': lambda answer: 'You must choose at least one task.' \
+                if len(answer) == 0 else True
+        }
+    ]
+    answers = prompt(question_task, style=style)
+    return answers
+
+def select_custom_model_data():
+    question_custom_model_data = [
+        {
+            'type': 'list',
+            'message': 'do you want to compress with your custom model & data?',
+            'name': 'custom_model_data',
+            'choices': [
+                Separator('= do you want to compress with your custom model & data? ='),
+                {
+                    'name': 'Yes'
+                },
+                {
+                    'name': "No"
+                },
+            ],
+            'validate': lambda answer: 'You must choose at least one task.' \
+                if len(answer) == 0 else True
+        }
+    ]
+    answers = prompt(question_custom_model_data, style=style)
+    return answers
+
+def get_model_path():
+    question_model_path = [
+        {
+            'type': 'input',
+            'message': 'model_path: ',
+            'name': 'model_path',
+        }
+    ]
+    answers = prompt(question_model_path, style=style)
+    return answers["model_path"]
+
+def get_dataset_path():
+    question_dataset_path = [
+        {
+            'type': 'input',
+            'message': 'dataset_path: ',
+            'name': 'dataset_path',
+        }
+    ]
+    answers = prompt(question_dataset_path, style=style)
+    return answers["dataset_path"]
+
+def get_config_path():
+    question_config_path = [
+        {
+            'type': 'input',
+            'message': 'compression_config_path: ',
+            'name': 'compression_config_path',
+        }
+    ]
+    answers = prompt(question_config_path, style=style)
+    return answers["compression_config_path"]
+
+def select_config_file():
+    question_config_file = [
+        {
+            'type': 'list',
+            'message': 'choose config',
+            'name': 'config',
+            'choices': [
+                {
+                    'name': 'mobilenet_v1_with_cifar100',
+                },
+                {
+                    'name': 'mobilenet_v2_with_imagewoof'
+                },
+                {
+                    'name': 'resnet18_with_cifar100'
+                },
+                {
+                    'name': 'resnet18_with_imagewoof'
+                },
+                {
+                    'name': 'resnet50_with_cifar100'
+                },
+                {
+                    'name': 'resnet50_with_imagewoof'
+                },
+                {
+                    'name': 'vgg19_with_cifar100'
+                },
+            ],
+            'validate': lambda answer: 'You must choose at least one task.' \
+                if len(answer) == 0 else True
+        }
+    ]
+    answers = prompt(question_config_file, style=style)
+    return answers["config"]
+
+def get_task_name():
+    question_task_name = [
+        {
+            'type': 'input',
+            'message': 'specify compression task name: ',
+            'name': 'task_name',
+        }
+    ]
+    answers = prompt(question_task_name, style=style)
+    return answers["task_name"]
+
+def save_userinfo(user_info):
+    with open("user_info.json", "wt") as f:
+        json.dump(user_info, f)
+
+def load_userinfo():
+    try:
+        with open("user_info.json", "rt") as f:
+            d = json.load(f)
+        return d
+    except:
+        raise Exception("loading userinfo failed!!")
+
+def delete_userinfo():
+    try:
+        os.remove("user_info.json")
+    except:
+        pass
+
+def save_compression_info(compression_info):
+    with open("compression_info.json", "wt") as f:
+        json.dump(compression_info, f)
+
+def load_compression_info():
+    try:
+        with open("compression_info.json", "rt") as f:
+            d = json.load(f)
+        return d
+    except:
+        raise Exception("loading compression_info failed!!")
+
+def delete_compression_info():
+    try:
+        os.remove("compression_info.json")
+    except:
+        pass
+
+def monitor_compression(user_key, compression_info):
+    compression_id = compression_info["compression_id"]
     while True:
-        current_status = get_compression_status(compression_id, return_type=ReturnDataType.JSON)
-        current_compression_id = current_status["compression_id"]
+        current_compression_info = monitoring_apis.get_compression_status(user_key, compression_id)
+        current_compression_id = current_compression_info["compression_id"]
         print("==========current status==========")
-        print(current_status)
+        print(current_compression_info)
         print("==================================")
         if current_compression_id == None: # 요청한 compression_id가 없는 경우, 프로그램 종료
             print(f"compression_id({current_compression_id}) does not exists")
             exit(0)
-        elif current_status["status"] != 0: # 도중에 error가 발생한 경우(status!=0), 프로그램 종료
+        elif current_compression_info["status"] != 0: # 도중에 error가 발생한 경우(status!=0), 프로그램 종료
             print("error in progressing")
             exit(0)
-        elif current_status["progress"] == 1: # compression task가 queue에서 대기하고 있음.
+        elif current_compression_info["progress"] == 1: # compression task가 queue에서 대기하고 있음.
             print("[*] compression task in queue!")
-            print("[*] currently stacked compression queue size : ", get_task_queue_size())
-        elif current_status["progress"] == 2:
+            print("[*] currently stacked compression queue size : ", monitoring_apis.get_task_queue_status())
+        elif current_compression_info["progress"] == 2:
             print("[*] compression is in progress.")
-        elif current_status["progress"] == 3: # 정상적으로 프로세스가 완료된 경우
+        elif current_compression_info["progress"] == 3: # 정상적으로 프로세스가 완료된 경우
             print("compression completed!")
             break
-        print(f"[*] running time in current step: ", calculate_duration(time_from=current_status["updated_time"]))
-        print(f"[*] total time: ", calculate_duration(time_from=current_status["created_time"]))
+        print(f"[*] running time in current step: ", time_calc.calculate_duration(time_from=current_compression_info["updated_time"]))
+        print(f"[*] total time: ", time_calc.calculate_duration(time_from=current_compression_info["created_time"]))
         print("\n\n")
         time.sleep(20)
 
-    #################################################################################################
+def download_result(user_key, compression_id):
+    result = monitoring_apis.get_compression_result(user_key, compression_id)
+    try:
+        print(result)
+        DOWNLOAD_DIR = "/".join(["result", compression_id])
+        log_file = network.download_file(result["url_log"], target_dir=DOWNLOAD_DIR)
+        print(f"[*] log file(filename: {log_file}) saved")
+        input_type_compressed_model = network.download_file(result["url_input_type_compressed_model"], target_dir=DOWNLOAD_DIR)
+        print(f"[*] input type compressed model(filename: {input_type_compressed_model}) saved")
+        converted_type_compressed_model = network.download_file(result["url_converted_type_compressed_model"], target_dir=DOWNLOAD_DIR)
+        print(f"[*] converted type compressed model(filename: {converted_type_compressed_model}) saved")
+    except Exception as e:
+        print("downloading result failed!!", e)
 
-    ##################### DOWNLOAD RESULT FILES######################################################
-    aws_auth_info = connection.get_auth()
-    result = get_result(compression_id, return_type=ReturnDataType.JSON)
-    print(result)
-    log_file = connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_log"])
-    print(f"[*] log file(filename: {log_file}) saved")
-    input_type_compressed_model = connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_input_type_compressed_model"])
-    print(f"[*] input type compressed model(filename: {input_type_compressed_model}) saved")
-    converted_type_compressed_model = connection.download_result_from_s3_with_url(aws_auth_info, compression_id, s3_url=result["url_converted_type_compressed_model"])
-    print(f"[*] converted type compressed model(filename: {converted_type_compressed_model}) saved")
-    ################################################################################################
+if __name__ == "__main__":
+    answers = select_main_task()
+    print(answers)
+    if answers["task"] == "Login":
+        user_id = get_user_id()
+        user_pw = get_user_pw()
+        user_info = auth.login(user_id, user_pw)
+        save_userinfo(user_info)
+    elif answers["task"] == "Logout":
+        delete_userinfo()
+    elif answers["task"] == "Create a compression":
+        print("compression")
+        user_info = load_userinfo()
+        user_key = user_info["user_key"]
+        answer_custom_model_data = select_custom_model_data()
+        if answer_custom_model_data["custom_model_data"] == "Yes":
+            
+            while True:
+                model_path = get_model_path()
+                s3_model_url = compression.upload_model_to_s3(user_key, model_path)                
+                if s3_model_url:
+                    print("model url: ", s3_model_url)
+                    break
+                else:
+                    print("invalid model file!!")
 
+            while True:
+                dataset_path = get_dataset_path()
+                s3_data_url = compression.upload_dataset_to_s3(user_key, dataset_path)
+                if s3_data_url:
+                    print("dataset url: ", s3_data_url)
+                    break
+                else:
+                    print("invalid dataset file!!")
 
-    ######################### FORMATTING OPTION EXAMPLES ###########################################
-    print("[*] worker status as YAML format")
-    print(get_worker_status_list(return_type=ReturnDataType.YAML))
-    print("[*] compression status list as DATA_FRAME format")
-    print(get_compression_status_list(return_type=ReturnDataType.DATA_FRAME))
-    ################################################################################################
-
-if __name__ == '__main__':
-    main()
+            config_path = get_config_path()
+            if not config_path:
+                config_path = "config_files/custom_default.json"
+            task_name = get_task_name()
+            compression_title = task_name
+            destination_path_s3 = "/" + task_name
+            compression_info = compression.create_compression(
+                user_key, config_json_path=config_path,
+                custom_model_dataset=True, model_url=s3_model_url,
+                dataset_url=s3_data_url, compression_title=compression_title, destination_path_s3=destination_path_s3
+            )
+        else: # using model zoo
+            compression_config = select_config_file()
+            if compression_config == 'mobilenet_v1_with_cifar100':
+                compression_config_path = "config_files/mb1_cifar100.json"
+            elif compression_config == 'mobilenet_v2_with_imagewoof':
+                compression_config_path = "config_files/mb2_imagewoof.json"
+            elif compression_config == 'resnet18_with_cifar100':
+                compression_config_path = "config_files/res18_cifar100.json"
+            elif compression_config == 'resnet18_with_imagewoof':
+                compression_config_path = "config_files/res18_imagewoof.json"
+            elif compression_config == 'resnet50_with_cifar100':
+                compression_config_path = "config_files/res50_cifar100.json"
+            elif compression_config == 'resnet50_with_imagewoof':
+                compression_config_path = "config_files/res50_imagewoof.json"
+            elif compression_config == 'vgg19_with_cifar100':
+                compression_config_path = "vgg19_cifar100.json"
+            else:
+                print("invalid compression config!!")
+                exit(0)
+            task_name = get_task_name()
+            compression_title = "_".join([task_name, compression_config])
+            destination_path_s3 = "/" + task_name
+            compression_info = compression.create_compression(
+                user_key, config_json_path=compression_config_path,
+                compression_title=compression_title,destination_path_s3=destination_path_s3
+            )
+        compression_id = compression_info["compression_id"]
+        save_compression_info(compression_info)
+        monitor_compression(user_key, compression_info)
+        download_result(user_key, compression_id)
+        
+    elif answers["task"] == "Resume monitoring(last compression)":
+        user_info = load_userinfo()
+        user_key = user_info["user_key"]
+        compression_info = load_compression_info()
+        compression_id = compression_info["compression_id"]
+        monitor_compression(user_key, compression_info)
+        download_result(user_key, compression_id)
+    elif answers["task"] == "Download result":
+        user_info = load_userinfo()
+        user_key = user_info["user_key"]
+        compression_info = load_compression_info()
+        compression_id = compression_info["compression_id"]
+        download_result(user_key, compression_id)
+    elif answers["task"] == "Exit":
+        print("exit")
+    else:
+        print("invalid selection")

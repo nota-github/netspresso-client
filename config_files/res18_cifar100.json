@@ -1,0 +1,68 @@
+{
+  "configs": {
+    "TASK": "classification",
+    "MODEL_PRESET": "res18_cifar100",
+    "COMPRESSION_ALIAS": "res18_cifar100",
+    "COMPRESSION_CONSTRAINTS": {
+      "objective": "accuracy",
+      "acceptable_drop_percent_point": 2.0
+    },
+    "COMPRESSION_STRATEGY": {
+      "initial_lr": 0.1,
+      "prune_margin": 0.5
+    },
+    "INPUT": {
+      "storage": "s3",
+      "type": "h5",
+      "path": "https://netspresso-test-bucket2.s3.us-east-2.amazonaws.com/models/resnet18_cifar100.h5",
+      "image_height_width": [
+        32,
+        32
+      ],
+      "test_accuracy_percent": 76.92,
+      "model_config": {
+        "custom_object_path": null,
+        "l2_reg": true,
+        "l2_weights_only": false,
+        "l2_lambda": 0.0005
+      }
+    },
+    "OUTPUT": {
+      "model_type": "tflite",
+      "dtype": "float16",
+      "test_device":"pc"
+    },
+    "STORAGE": {
+      "type": "s3",
+      "region_name": "us-east-2",
+      "s3_bucket_name": "netspresso-test-bucket1",
+      "destination_path": "/example1_yaml"
+    },
+    "DATASET": {
+      "storage": "s3",
+      "type": "npy",
+      "path": {
+        "train_x": "https://netspresso-test-bucket2.s3.us-east-2.amazonaws.com/datasets/cifar100_npy/train_x.npy",
+        "train_y": "https://netspresso-test-bucket2.s3.us-east-2.amazonaws.com/datasets/cifar100_npy/train_y.npy",
+        "test_x": "https://netspresso-test-bucket2.s3.us-east-2.amazonaws.com/datasets/cifar100_npy/test_x.npy",
+        "test_y": "https://netspresso-test-bucket2.s3.us-east-2.amazonaws.com/datasets/cifar100_npy/test_y.npy"
+      },
+      "dataloader_config": {
+        "preprocessing": {
+          "rescale_value": 255,
+          "mean": [
+            0.4914,
+            0.4822,
+            0.4465
+          ],
+          "std": [
+            0.2023,
+            0.1994,
+            0.201
+          ]
+        },
+        "default_batch_size": 128
+      }
+    }
+  }
+}
