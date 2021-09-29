@@ -14,3 +14,4 @@ s3transfer==0.3.6
 six==1.15.0
 tqdm==4.59.0
 urllib3==1.26.4
+PyInquirer==1.0.3
